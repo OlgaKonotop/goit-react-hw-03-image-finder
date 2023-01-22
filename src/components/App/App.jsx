@@ -20,18 +20,18 @@ export class App extends Component {
   };
 
   async componentDidUpdate(_, prevState) {
-    const { searchQuery, page } = this.state;
+    const { searchQuery, per_page, page } = this.state;
 
-    if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
+    if (
+      prevState.searchQuery !== searchQuery ||
+      prevState.per_page !== per_page
+    ) {
       try {
         this.setState({ isLoading: true, error: null });
-        const gallery = await fetchGallery(searchQuery, page);
+        const gallery = await fetchGallery(searchQuery, per_page);
         this.setState({ gallery: gallery.hits });
 
         if (page <= gallery.totalHits / this.state.per_page) {
-          console.log(page);
-          console.log(gallery.totalHits / this.state.per_page);
-
           this.setState({ showButton: true });
         } else {
           this.setState({ showButton: false });
@@ -53,12 +53,15 @@ export class App extends Component {
   onSearch = searchValue => {
     this.setState({
       searchQuery: searchValue,
-      page: 1,
+      per_page: 12,
       gallery: [],
     });
   };
   onLoadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+    console.log(this.state.per_page);
+    this.setState(prevState => ({
+      per_page: prevState.per_page + 12,
+    }));
   };
 
   onImgClick = url => {
